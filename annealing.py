@@ -6,7 +6,7 @@ import seaborn as sns
 sns.set_style('dark')
 
 
-class MonteCarloAnnealing:
+class MonteCarloAnnealer:
     def __init__(self, config, seed=665):
         np.random.seed(seed)
         self.rng = np.random.RandomState(seed)
@@ -20,6 +20,8 @@ class MonteCarloAnnealing:
         self.random_start()
         self.reset_memory()
         self.visualize_potential()
+
+        print('Domain dim: {:d}'.format(np.prod([x.stop for x in self.coordinates.values()])))
 
     def reset_memory(self):
         self.memory = {}
@@ -61,7 +63,7 @@ class MonteCarloAnnealing:
 
         return neighbor_state
 
-    def temperature(self, step):
+    def compute_temperature(self, step):
         # step goes from 0 to k_max - 1
         t = self.config.initial_temperature * (self.config.max_steps - 1 - step) / (self.config.max_steps - 1) \
             + self.config.residual_temperature
@@ -92,9 +94,12 @@ class MonteCarloAnnealing:
         self.random_start()  # choose starting state randomly
         self.reset_memory()  # reset memory to record trajecotry data
 
+        cost = float("inf")
+        accept = True
         for step in tqdm(range(self.config.max_steps)):
-            cost = self.compute_cost(self.state)
-            temperature = self.temperature(step)
+            if accept:
+                cost = self.compute_cost(self.state)
+            temperature = self.compute_temperature(step)
 
             new_state = self.random_neighbor()
             new_cost = self.compute_cost(new_state)

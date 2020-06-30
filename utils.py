@@ -69,7 +69,7 @@ def create_animation(annealer, save_file=None):
         return sc, ln
 
     ani = animation.FuncAnimation(fig, update_fig, tot_steps, interval=5, blit=True)
-    writer = animation.writers['ffmpeg'](fps=60)
+    writer = animation.writers['ffmpeg'](fps=120)
 
     dpi = 100
     if save_file is None:
