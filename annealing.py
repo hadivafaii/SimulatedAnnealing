@@ -93,22 +93,19 @@ class MonteCarloAnnealer:
     def run_simulation(self):
         self.random_start()  # choose starting state randomly
         self.reset_memory()  # reset memory to record trajecotry data
+        cost = self.compute_cost(self.state)
 
-        cost = float("inf")
-        accept = True
         for step in tqdm(range(self.config.max_steps)):
-            if accept:
-                cost = self.compute_cost(self.state)
-            temperature = self.compute_temperature(step)
-
             new_state = self.random_neighbor()
             new_cost = self.compute_cost(new_state)
 
+            temperature = self.compute_temperature(step)
             accept = self.accept(cost, new_cost, temperature)
             self.update_memory(step, self.state, cost, temperature, accept)
 
             if accept:
                 self.update_state(new_state)
+                cost = new_cost
 
         print('[INFO] simulation done, final values:')
         msg = '[INFO] final state: {},  corresponds to: {},   cost: {:.3f}:'
