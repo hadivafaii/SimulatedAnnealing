@@ -27,7 +27,7 @@ class MonteCarloAnnealer:
         self.memory = {}
 
     def update_memory(self, step, state, cost, temperature, accept):
-        self.memory.update({step: self.trajectory_data(state, cost, temperature, accept)})
+        self.memory.update({step: self.trajectory_data(state, np.round(cost, 4), np.round(temperature, 4), accept)})
 
     def update_state(self, new_state):
         assert isinstance(new_state, dict), "states must be dict"

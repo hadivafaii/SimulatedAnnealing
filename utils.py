@@ -12,7 +12,7 @@ def create_animation(annealer, save_file=None):
 
     fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(28, 8))
 
-    sc = ax[0].scatter(x=[], y=[], s=5, marker='.', cmap="Greens")
+    sc = ax[0].scatter(x=[], y=[], s=30, marker='.', cmap="Greens")
     im = ax[0].imshow(annealer.potential, cmap='RdBu')
     ax[0].set_xlabel('x')
     ax[0].set_xlabel('y')
@@ -33,7 +33,7 @@ def create_animation(annealer, save_file=None):
 
     ax[0].invert_yaxis()
     plt.colorbar(im, ax=ax[0])
-    ax[0].set_title('Energy Landscape', fontsize=13)
+    ax[0].set_title('Energy Landscape', fontsize=16)
 
     all_costs = [annealer.memory[i].cost for i in range(tot_steps)]
 
@@ -45,11 +45,11 @@ def create_animation(annealer, save_file=None):
     ax[1].set_xlabel('time', fontsize=10)
     ax[1].set_xlim(0, tot_steps)
     ax[1].set_ylim(min_cost - delta / 5, max_cost + delta / 5)
-    ax[1].set_title('Trajectory Costs', fontsize=13)
+    ax[1].set_title('Trajectory Costs', fontsize=16)
     plt.grid()
 
     msg = 'Initial T = {:d},   max_steps = {:d}'
-    plt.suptitle(msg.format(annealer.config.initial_temperature, annealer.config.max_steps), fontsize=17)
+    plt.suptitle(msg.format(annealer.config.initial_temperature, annealer.config.max_steps), fontsize=20)
 
     def update_fig(step):
         sc_data = np.array([tuple(annealer.memory[i].state.values()) for i in range(step + 1)])
@@ -66,10 +66,13 @@ def create_animation(annealer, save_file=None):
         ln.set_xdata(range(len(ln_data)))
         ln.set_ydata(ln_data)
 
+        title = 'Trajectory Costs,  current temperature = {:.2f}'
+        ax[1].set_title(title.format(annealer.memory[step].T), fontsize=16)
+
         return sc, ln
 
     ani = animation.FuncAnimation(fig, update_fig, tot_steps, interval=5, blit=True)
-    writer = animation.writers['ffmpeg'](fps=120)
+    writer = animation.writers['ffmpeg'](fps=240)
 
     dpi = 100
     if save_file is None:
